@@ -1,11 +1,12 @@
-package adventreader
+package adventcommon
 
 import (
 	"bufio"
 	"os"
 )
 
-func check(e error) {
+//Check makes error checking easy
+func Check(e error) {
 	if e != nil {
 		panic(e)
 	}
@@ -13,8 +14,9 @@ func check(e error) {
 
 //ScannerFile returns a bufio scanner for the desired file
 func ScannerFile(filename string) *bufio.Scanner {
+
 	file, err := os.Open(filename)
-	check(err)
+	Check(err)
 	scanner := bufio.NewScanner(file)
 	return scanner
 }

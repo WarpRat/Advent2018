@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/WarpRat/Advent2018/pkg/common"
+	c "github.com/WarpRat/Advent2018/pkg/common"
 )
 
 func calculator(frequency int, op []byte, nextNum int) int {
@@ -29,15 +29,12 @@ func scanLooper() (int, int) {
 	//Presume that we won't need to do more than 10k loops.
 	for loops := 0; loops < 10000; loops++ {
 
-		inputScanner := adventreader.ScannerFile("input")
+		inputScanner := c.ScannerFile("input")
 
 		for inputScanner.Scan() {
 			line := inputScanner.Bytes()
 			nextNum, err := strconv.Atoi(string(line[1:]))
-			if err != nil {
-				panic(err)
-			}
-
+			c.Check(err)
 			frequency = calculator(frequency, line[:1], nextNum)
 
 			for _, x := range allFrq {
