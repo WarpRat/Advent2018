@@ -18,7 +18,6 @@ func calculator(frequency int, op []byte, nextNum int) int {
 		panic("Failed")
 
 	}
-
 }
 
 func scanLooper() (int, int) {
