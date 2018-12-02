@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/WarpRat/Advent2018"
+	"github.com/WarpRat/Advent2018/pkg/common"
 )
 
 func calculator(frequency int, op []byte, nextNum int) int {
@@ -22,6 +22,7 @@ func calculator(frequency int, op []byte, nextNum int) int {
 }
 
 func scanLooper() (int, int) {
+
 	var allFrq []int
 	var finalFrq int
 	var frequency int
@@ -30,13 +31,14 @@ func scanLooper() (int, int) {
 	for loops := 0; loops < 10000; loops++ {
 
 		inputScanner := adventreader.ScannerFile("input")
+
 		for inputScanner.Scan() {
 			line := inputScanner.Bytes()
 			nextNum, err := strconv.Atoi(string(line[1:]))
 			if err != nil {
 				panic(err)
 			}
-			fmt.Printf("\nfrequency is %v\n", frequency)
+
 			frequency = calculator(frequency, line[:1], nextNum)
 
 			for _, x := range allFrq {
@@ -45,15 +47,13 @@ func scanLooper() (int, int) {
 					return frequency, finalFrq
 				}
 			}
-			allFrq = append(allFrq, frequency)
 
+			allFrq = append(allFrq, frequency)
 		}
 
 		if loops == 0 {
 			finalFrq = frequency
 		}
-
-		fmt.Printf("done %v loops, frequency is %v", loops, frequency)
 	}
 
 	panic("No match found in 10,000 loops. You can try increasing it or check your code.")
