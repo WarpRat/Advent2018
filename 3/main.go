@@ -19,7 +19,7 @@ type claim struct {
 func splitter() *[]claim {
 	var claims []claim
 
-	claimScanner := c.ScannerFile("test")
+	claimScanner := c.ScannerFile("input")
 	for claimScanner.Scan() {
 		var newClaim claim
 
@@ -34,9 +34,9 @@ func splitter() *[]claim {
 		c.Check(err)
 		top, err := strconv.Atoi(coords[1][:len(coords[1])-1])
 		c.Check(err)
-		height, err := strconv.Atoi(size[0])
+		height, err := strconv.Atoi(size[1])
 		c.Check(err)
-		width, err := strconv.Atoi(size[1])
+		width, err := strconv.Atoi(size[0])
 		c.Check(err)
 
 		newClaim = claim{
@@ -50,12 +50,50 @@ func splitter() *[]claim {
 		claims = append(claims, newClaim)
 
 	}
-	fmt.Printf("%+v\n", claims)
+	return &claims
+}
 
-	return nil
+func addressMapper(claims *[]claim) *map[int][]int {
 
+	m := make(map[int][]int)
+	for _, i := range *claims {
+		for t := 0; t < i.Height; t++ {
+			row := i.Top + t
+
+			for x := 0; x < i.Width; x++ {
+				le := i.LeftEdge + x
+				m[row] = append(m[row], le)
+			}
+
+		}
+	}
+	return &m
+}
+
+func dupeFinder(adMap map[int][]int) {
+	var totalCovered int
+
+	for k := range adMap {
+
+		rowCount := make(map[int]int, len(adMap[k]))
+
+		for _, i := range adMap[k] {
+			rowCount[i]++
+		}
+		for i := range rowCount {
+			if rowCount[i] > 1 {
+				totalCovered++
+			}
+		}
+	}
+
+	fmt.Printf("\nTotal inches of fabric covered: %v\n", totalCovered)
 }
 
 func main() {
-	splitter()
+
+	claims := splitter()
+	adMap := addressMapper(claims)
+	dupeFinder(*adMap)
+
 }
