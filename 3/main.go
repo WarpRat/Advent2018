@@ -14,6 +14,7 @@ type claim struct {
 	Top         int
 	Height      int
 	Width       int
+	Squares     [][2]int
 }
 
 func splitter() *[]claim {
@@ -47,53 +48,82 @@ func splitter() *[]claim {
 			Width:       width,
 		}
 
-		claims = append(claims, newClaim)
+		m := make(map[int][]int)
+		for t := 0; t < height; t++ {
+			row := top + t
 
+			for x := 0; x < width; x++ {
+				var newCoords [2]int
+				le := left + x
+				m[row] = append(m[row], le)
+				newCoords = [2]int{row, le}
+				newClaim.Squares = append(newClaim.Squares, newCoords)
+
+			}
+
+		}
+
+		claims = append(claims, newClaim)
 	}
 	return &claims
 }
 
-func addressMapper(claims *[]claim) *map[int][]int {
+func dupeFinder(claims *[]claim) {
+	allSquares := make(map[[2]int]int)
 
-	m := make(map[int][]int)
 	for _, i := range *claims {
-		for t := 0; t < i.Height; t++ {
-			row := i.Top + t
-
-			for x := 0; x < i.Width; x++ {
-				le := i.LeftEdge + x
-				m[row] = append(m[row], le)
-			}
-
+		for y := range i.Squares {
+			allSquares[i.Squares[y]]++
 		}
 	}
-	return &m
-}
+	fmt.Printf("%+v", allSquares)
 
-func dupeFinder(adMap map[int][]int) {
 	var totalCovered int
-
-	for k := range adMap {
-
-		rowCount := make(map[int]int, len(adMap[k]))
-
-		for _, i := range adMap[k] {
-			rowCount[i]++
-		}
-		for i := range rowCount {
-			if rowCount[i] > 1 {
-				totalCovered++
-			}
+	for i := range allSquares {
+		if allSquares[i] > 1 {
+			totalCovered++
+			delete(allSquares, i)
 		}
 	}
 
-	fmt.Printf("\nTotal inches of fabric covered: %v\n", totalCovered)
+	fmt.Printf("Total covered squares: %v\n", totalCovered)
+
+	/* TODO #### COME  BACK HERE
+	for _, i := range *claims {
+		for y := range i.Squares {
+
+		}
+	}
+
+	*/
+
+	/*
+		var totalCovered int
+		fullMap := make(map[int]map[int]int)
+
+		for k := range adMap {
+
+			rowCount := make(map[int]int, len(adMap[k]))
+
+			for _, i := range adMap[k] {
+				rowCount[i]++
+			}
+			for i := range rowCount {
+				if rowCount[i] > 1 {
+					totalCovered++
+				}
+			}
+			fullMap[k] = rowCount
+		}
+
+		fmt.Printf("\nTotal inches of fabric covered: %v\n", totalCovered)
+	*/
 }
 
 func main() {
 
 	claims := splitter()
-	adMap := addressMapper(claims)
-	dupeFinder(*adMap)
+	dupeFinder(claims)
+	//fmt.Printf("%+v", claims)
 
 }
